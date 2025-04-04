@@ -39,22 +39,21 @@ import (
 )
 
 func main() {
-    godotenv.Load(".env") // make sure OPENAI_KEY is in your .env
-    p := pneuma.Init(os.Getenv("OPENAI_KEY"))
-
-    type Dog struct {
-        Name          string `pneuma:"use english language"`
-        Age           int    `pneuma:"more than 6"`
-        FavouriteFood string `pneuma:"prefers fruits"`
-    }
-
-    d := Dog{}
-    err := p.Fill(&d)
-    if err != nil {
-        panic(err)
-    }
-
-    fmt.Printf("Dog: %+v\n", d)
+	godotenv.Load() // Load OPENAI_KEY from .env
+	p := pneuma.Init(os.Getenv("OPENAI_KEY"))
+	
+	type Product struct {
+		Name        string  `pneuma:"tech gadget"`
+		Price       float64 `pneuma:"50-200 range"`
+		Description string  `pneuma:"concise marketing copy"`
+	}
+	
+	var prod Product
+	if err := p.Fill(&prod); err != nil {
+		panic(err)
+	}
+	
+	fmt.Printf("Generated product: %+v\n", prod)
 }
 ~~~
 
