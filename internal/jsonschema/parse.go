@@ -37,7 +37,6 @@ func GenerateJSONSchema(v interface{}) (json.RawMessage, error) {
 	if t.Kind() == reflect.Ptr {
 		t = t.Elem()
 	}
-
 	props, required := buildTypedProperties(t)
 
 	wrapper := JSONSchema{
