@@ -19,26 +19,26 @@ type pneumaOpts struct {
 	key string
 }
 
-type pneuma struct {
+type Pneuma struct {
 	opts     pneumaOpts
 	provider LLMProvider
 }
 
-func Init(key string) *pneuma {
-	return &pneuma{
+func Init(key string) *Pneuma {
+	return &Pneuma{
 		opts:     pneumaOpts{},
 		provider: providers.NewOpenAIProvider(key),
 	}
 }
 
-func InitWithProvider(newProvider func() LLMProvider) *pneuma {
-	return &pneuma{
+func InitWithProvider(newProvider LLMProvider) *Pneuma {
+	return &Pneuma{
 		opts:     pneumaOpts{},
-		provider: newProvider(),
+		provider: newProvider,
 	}
 }
 
-func (p *pneuma) Fill(s interface{}) error {
+func (p *Pneuma) Fill(s interface{}) error {
 	schema, err := jsonschema.GenerateJSONSchema(s)
 	if err != nil {
 		return err
@@ -51,7 +51,7 @@ func (p *pneuma) Fill(s interface{}) error {
 	return nil
 }
 
-func (p *pneuma) FillWithContext(s interface{}, context string) error {
+func (p *Pneuma) FillWithContext(s interface{}, context string) error {
 	schema, err := jsonschema.GenerateJSONSchema(s)
 	if err != nil {
 		return err

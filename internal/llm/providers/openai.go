@@ -11,13 +11,19 @@ import (
 )
 
 type OpenAIProvider struct {
-	key string
+	key   string
+	model string
 }
 
 func NewOpenAIProvider(key string) *OpenAIProvider {
 	return &OpenAIProvider{
-		key: key,
+		key:   key,
+		model: "gpt-4o",
 	}
+}
+
+func (o *OpenAIProvider) SetModel(model string) {
+	o.model = model
 }
 
 func (o *OpenAIProvider) CompleteWithSchema(
@@ -34,21 +40,23 @@ func (o *OpenAIProvider) CompleteWithSchema(
 	client := openai.NewClient(
 		option.WithAPIKey(o.key),
 	)
-	chatCompletion, err := client.Chat.Completions.New(context.TODO(), openai.ChatCompletionNewParams{
-		Messages: []openai.ChatCompletionMessageParamUnion{
-			openai.UserMessage(promptWithContext),
-		},
-		ResponseFormat: openai.ChatCompletionNewParamsResponseFormatUnion{
-			OfJSONSchema: &shared.ResponseFormatJSONSchemaParam{
-				JSONSchema: shared.ResponseFormatJSONSchemaJSONSchemaParam{
-					Name:   objectName,
-					Strict: param.NewOpt(true),
-					Schema: schema,
+	chatCompletion, err := client.Chat.Completions.New(
+		context.TODO(),
+		openai.ChatCompletionNewParams{
+			Messages: []openai.ChatCompletionMessageParamUnion{
+				openai.UserMessage(promptWithContext),
+			},
+			ResponseFormat: openai.ChatCompletionNewParamsResponseFormatUnion{
+				OfJSONSchema: &shared.ResponseFormatJSONSchemaParam{
+					JSONSchema: shared.ResponseFormatJSONSchemaJSONSchemaParam{
+						Name:   objectName,
+						Strict: param.NewOpt(true),
+						Schema: schema,
+					},
 				},
 			},
-		},
-		Model: openai.ChatModelGPT4o,
-	})
+			Model: o.model,
+		})
 
 	if err != nil {
 		return nil, err
